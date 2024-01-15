@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html>
+<link href="styles.css" rel="stylesheet">
+<head>
+  <title>Ex11 GIPHY</title>
+</head>
+<body>
+  <div id = "inputField">
+  <h1>Give me a random GIF, <b>NOW!</b></h1>
+    <h2>Enter tags below</h2>
+	<input type="text" id="tags" value="Funny cat gifs..." onclick="removeValue()">
+  <div id="btns">
+  <button id="submitBtn" type="submit">Get GIF</button>
+  <button id="rainBtn" type="submit">Let it rain!</button>
+  </div>
+  </div>
+  <div id="gifDisplay"></div>
+<script>
+  var apiKey = "!ENTER GIPHY API KEY HERE!";
+  
+  var submitBtn = document.getElementById("submitBtn");
+  submitBtn.addEventListener("click", getGif);
+  
+  var rainBtn = document.getElementById("rainBtn");
+  rainBtn.addEventListener("click", getAlotGifs);
+  
+  var tags = document.getElementById("tags");
+  
+  function removeValue() {
+  	if (tags.value === "Funny cat gifs...") {tags.value=null;}
+  }
+  
+  function getGif(){
+  	var input = safeString(); 
+    var apiUrl = `https://api.giphy.com/v1/gifs/random?api_key=${apiKey}&tag=${input}&rating=G`;
+    console.log(apiUrl);
+    
+    var gifDisplay = document.getElementById("gifDisplay");
+    
+    fetch(apiUrl)
+    .then(response => response.json())
+    .then(responseData => {
+    	const gifUrl = responseData.data.images.original.url;
+      console.log(gifUrl);
+      var gif = document.createElement("img");
+      gif.src = gifUrl;
+      gifDisplay.appendChild(gif);
+    });
+  }
+  
+    function getAlotGifs(){
+    var apiKey = "ENTER GIPHY API KEY HERE";
+  	var input = safeString(); 
+    var apiUrl = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${input}&limit=21&rating=r`;
+    console.log(apiUrl);
+    
+    var gifDisplay = document.getElementById("gifDisplay");
+    
+    fetch(apiUrl)
+    .then(response => response.json())
+    .then(responseData => {
+    	const gifUrl = responseData.data;
+      	gifUrl.forEach(gifData => {
+        	const gifId = gifData.images.original.url;
+          	var gif = document.createElement("img");
+      		gif.src = gifId;
+      gifDisplay.appendChild(gif);
+        });
+    });
+  }
+  
+  function safeString(){
+  	var safeString = encodeURIComponent(getTag());
+    return safeString;
+  }
+  
+  function getTag() {
+  	return tags.value;
+  }
+</script>
+</body>
+</html>
